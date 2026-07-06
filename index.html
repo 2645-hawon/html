@@ -322,7 +322,7 @@ cursor:pointer; flex-shrink:0; padding:0;
   <form>
 <div>
 <label for="title">공동구매 물품 이름</label>
-<input type="text" id="title" placeholder="예: 초코송이 3박스" required>
+<input type="text" id="title" placeholder="예: 초코송이 10개" required>
 </div>
 <div>
 <label for="link">구매처 링크</label>
@@ -347,7 +347,7 @@ cursor:pointer; flex-shrink:0; padding:0;
 </div>
 </div>
 
-<!-- 채팅 모달 -->
+<!-- 채팅-->
 <div class="chat-modal" id="chatModal">
 <div class="chat-box">
     <div class="chat-header">
@@ -637,10 +637,10 @@ window.deleteItem = async function(key) {
   }
 }
 
-// [Firebase 하위 컬렉션 실시간 채팅 구독 및 업데이트]
+// 방마다 채팅 구분(방제목과 메시지 불러옴)
 window.openChat = async function(key) {
   currentChatKey = key;
-  if (unsubscribeChat) unsubscribeChat(); // 기존 리스너 해제 방어코드
+  if (unsubscribeChat) unsubscribeChat();
 
   try {
     const docSnap = await getDoc(doc(db, "items", key));
