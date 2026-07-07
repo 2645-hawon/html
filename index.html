@@ -6,7 +6,7 @@
 <style>
 /* 전체 화면 꾸미기*/
 body{
-background-color: white; /* 흰색배경 */
+background-color: #fafafa; /* 흰색배경 */
 font-family: -apple-system, sans-serif; /* 깔끔한 글시체,애플 시스템 폰트,sans-serif 기본 고딕체로 바꾸는 보험(안됨 방지) */
 padding: 40px 20px;
 display: flex;
@@ -15,10 +15,12 @@ align-items: center; /* 가운데 정렬 */
         }
 /* 제목 글자 꾸미기*/
 h1{
-background-color: blue;
-color: white; /* ← 흰 글씨 추가 */
-font-size: 24px;
-margin-bottom: 7px; /* 여백 생성*/
+background-color: transparent;
+color: #0064ff;
+font-size: 32px;
+font-weight: 800;
+letter-spacing: -0.02em;
+margin-bottom: 12px;
 text-align: center;
         }
 /* 입력창들 꾸미기 */
@@ -27,6 +29,10 @@ background-color: white;
 padding: 30px;
 border-radius:25px; /*모서리를 둥글게*/
 width: 100%;
+max-width: 400px;
+margin: 0 auto;
+position: relative;
+left: -35px;
         }
 /* 입력창 이름표 꾸미기 */
 label{
@@ -46,7 +52,7 @@ margin-bottom: 15px;
 border: 1px solid #ccc;
 border-radius: 10px;
 color: #333;
-text-align: left; /* 왼쪽 정렬 */
+text-align: center;
 box-sizing: border-box; /* 레이아웃 깨짐 방지 */
 display: block;
 margin-left: auto;
@@ -90,6 +96,7 @@ color: #27ae60;
 /* 로그인 전체 상자 */
 #start{
 text-align: center;
+margin-top: 60px;
         }
 button {
 width: 100%;
@@ -141,16 +148,18 @@ border-radius: 20px;
 width: 100%;
 max-width: 350px;
 text-align: center;
-box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-margin: 0 auto;
+box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+border: 1px solid #eee;
+margin: 60px auto 0;
         }
 .auth-box input {
 width: 100%;
 padding: 12px;
 margin-bottom: 10px;
 border: 1px solid #ddd;
-border-radius: 8px;
+border-radius: 10px;
 box-sizing: border-box;
+font-size: 14.5px;
         }
 .auth-box button {
 width: 100%;
@@ -273,7 +282,8 @@ cursor:pointer; flex-shrink:0; padding:0;
 <div id="start">
 <h1>부마공구</h1>
 <p>공동 구매 서비스</p>
-<button type="button" onclick="changePage('login-page')">로그인하고 시작하기</button>
+<p style="font-size:13px; margin-top:-20px; margin-bottom:30px;"><br>함께사면 더욱 저렴합니다!</p>
+<button type="button" onclick="changePage('login-page')">로그인하기</button>
 </div>
   
 <!-- 로그인 페이지 -->
@@ -313,10 +323,14 @@ cursor:pointer; flex-shrink:0; padding:0;
 </div>
   
 <!-- 메인 페이지 -->
-<div id="main-page" style="display: none;">
-  <div style="display: flex; gap: 15px; justify-content: center; margin: 20px auto; margin-left: 27.5px; width: 100%; box-sizing: border-box;">
-  <button type="button" id="btn-reg-sub" onclick="changePage('register-sub')" style="background-color: #0064ff; border: 3px solid #002f87; box-shadow: 0 0 8px rgba(0,100,255,0.6); box-sizing: border-box;">공구 등록하기</button>
-  <button type="button" id="btn-view-sub" onclick="changePage('view-sub')" style="background-color: #27ae60; border: 3px solid transparent; box-sizing: border-box;">등록된 공구보기</button>
+<div id="main-page" style="display: none; width: 100%; max-width: 400px; margin: 0 auto;">
+<div id="site-header" style="display:none; width:100%; align-items:center; justify-content:space-between; margin-bottom:20px; padding-bottom:12px; border-bottom:1px solid #eee;">
+  <span style="font-weight:800; color:#0064ff; font-size:15px;">부마공구</span>
+  <div style="display:flex; gap:18px;">
+    <a id="nav-view" onclick="changePage('view-sub')" style="font-size:13px; color:#333; cursor:pointer; text-decoration:none; padding-bottom:4px;">현재 공구</a>
+    <a id="nav-reg" onclick="changePage('register-sub')" style="font-size:13px; color:#555; cursor:pointer; text-decoration:none; padding-bottom:4px;">공구 요청</a>
+  </div>
+  <a onclick="doLogout()" style="font-size:13px; color:#e74c3c; cursor:pointer; text-decoration:none;">로그아웃</a>
 </div>
 <div id="sub-register">
   <form>
@@ -338,11 +352,10 @@ cursor:pointer; flex-shrink:0; padding:0;
 </div>
 <div id="items-ct"></div>
 <button type="submit">공구 등록하기</button>
-<button type="button" onclick="doLogout()" style="background-color: #e74c3c; margin-top: 20px;">로그아웃</button>
 </form>
 </div>
 <!-- 목록보기 누르면 보일 서브화면 생성 -->
-<div id="sub-view" style="display: none; width: 100%; flex-direction: column; align-items: center; margin-left: 27px;">
+<div id="sub-view" style="display: none; width: 100%; flex-direction: column; align-items: center;">
   <div id="view-items-ct" style="width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center;"></div>
 </div>
 </div>
@@ -415,7 +428,7 @@ window.changePage = function(page) {
   document.getElementById('signup').style.display = 'none';
   document.getElementById('main-page').style.display = 'none';
 
-  const btnReg = document.getElementById('btn-reg-sub');
+const btnReg = document.getElementById('btn-reg-sub');
   const btnView = document.getElementById('btn-view-sub');
   if (btnReg && btnView) {
     btnReg.style.border = "3px solid transparent";
@@ -424,20 +437,30 @@ window.changePage = function(page) {
     btnView.style.boxShadow = "none";
   }
 
+  const navView = document.getElementById('nav-view');
+  const navReg = document.getElementById('nav-reg');
+  if (navView) navView.style.borderBottom = "2px solid transparent";
+  if (navReg) navReg.style.borderBottom = "2px solid transparent";
+
+const siteHeader = document.getElementById('site-header');
 
   if (page == 'login-page') {
     document.getElementById('login').style.display = 'block';
+    if (siteHeader) siteHeader.style.display = 'none';
   } else if (page == 'signup-page') {
     document.getElementById('signup').style.display = 'block';
+    if (siteHeader) siteHeader.style.display = 'none';
   } else if (page == 'main-page' || page == 'register-sub') {
     document.getElementById('main-page').style.display = 'block';
     document.getElementById('sub-register').style.display = 'block';
     document.getElementById('sub-view').style.display = 'none';
+    if (siteHeader) siteHeader.style.display = 'flex';
     if (btnReg) {
       btnReg.style.border = "3px solid #002f87";
       btnReg.style.boxShadow = "0 0 8px rgba(0,100,255,0.6)";
     }
-  } else if (page == 'view-sub') {
+    if (navReg) navReg.style.borderBottom = "2px solid #0064ff";
+} else if (page == 'view-sub') {
     document.getElementById('main-page').style.display = 'block';
     document.getElementById('sub-register').style.display = 'none';
     document.getElementById('sub-view').style.display = 'block';
@@ -445,6 +468,7 @@ window.changePage = function(page) {
       btnView.style.border = "3px solid #145a32";
       btnView.style.boxShadow = "0 0 8px rgba(39,174,96,0.6)";
     }
+    if (navView) navView.style.borderBottom = "2px solid #0064ff";
   }
 }
 
