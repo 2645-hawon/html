@@ -385,6 +385,7 @@ const db = getFirestore(app);
 let loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser')) || null;
 let currentChatKey = null;
 let unsubscribeChat = null;
+let unsubscribeItems = null;
 
 // 아이디 검증
 // 함수를 브라우저 전체가 공용으로 쓰는 window 공간
@@ -552,13 +553,14 @@ document.querySelector('form').addEventListener('submit', async function(e) {
 
 // 실시간 새로고침(다른사람에게도 나의 공구글이 뜸)
 function listenItems() {
+  if (unsubscribeItems) unsubscribeItems();
   const q = query(collection(db, "items"), orderBy("timestamp", "desc"));
   
-  onSnapshot(q, (snapshot) => {
+    unsubscribeItems = onSnapshot(q, (snapshot) => {
     if (!loggedInUser) return;
     const itemsContainer = document.getElementById('view-items-ct');
     if (!itemsContainer) return;
-    itemsContainer.innerHTML = ''; 
+    let allHtml = '';
 
     snapshot.forEach((docSnap) => {
       const key = docSnap.id;
@@ -570,14 +572,14 @@ function listenItems() {
 
       const joinBtnHtml = (isJoined || isOwner)
         ? `<button class="join-btn" disabled style="opacity:0.5;">${isOwner ? '내가 등록한 공구' : '✓ 참여중'}</button>`
-        : `<button class="join-btn" onclick="joinItem('${key}')">참여하기</button>`;
+        : `<button class="join-btn" data-action="join" data-key="${key}">참여하기</button>`;
 
-      const chatBtnHtml = (isJoined || isOwner)
-        ? `<button class="chat-btn" onclick="openChat('${key}')">💬 채팅</button>`
+     const chatBtnHtml = (isJoined || isOwner)
+        ? `<button class="chat-btn" data-action="chat" data-key="${key}">💬 채팅</button>`
         : '';
 
       const deleteBtnHtml = isOwner
-        ? `<button class="delete-btn" onclick="deleteItem('${key}')">삭제</button>`
+        ? `<button class="delete-btn" data-action="delete" data-key="${key}">삭제</button>`
         : '';
 
       const itemHtml = `
@@ -592,10 +594,21 @@ function listenItems() {
             ${joinBtnHtml}${chatBtnHtml}${deleteBtnHtml}
         </div>
       `;
-      itemsContainer.innerHTML += itemHtml;
+      allHtml += itemHtml;
     });
+    itemsContainer.innerHTML = allHtml;
   });
 }
+
+document.getElementById('view-items-ct').addEventListener('click', function(e) {
+  const btn = e.target.closest('button[data-action]');
+  if (!btn) return;
+  const key = btn.dataset.key;
+  const action = btn.dataset.action;
+  if (action === 'join') window.joinItem(key);
+  else if (action === 'chat') window.openChat(key);
+  else if (action === 'delete') window.deleteItem(key);
+});
 
 // 공구 참여
 window.joinItem = async function(key) {
